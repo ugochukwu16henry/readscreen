@@ -74,16 +74,21 @@ public sealed class OverlayService : IOverlayService
     {
         var label = status switch
         {
-            AssistantStatus.Listening => "Listening",
-            AssistantStatus.Reading => "Reading screen",
+            AssistantStatus.Listening => "Listening to meeting",
+            AssistantStatus.Reading => "Reading your screen",
             AssistantStatus.Thinking => "Thinking",
             AssistantStatus.Answering => "Answering",
             AssistantStatus.Paused => "Paused",
             AssistantStatus.Blocked => "Capture blocked",
             AssistantStatus.Error => "Error",
-            _ => "Idle"
+            _ => "Ready"
         };
         RunOnUi(() => _window.SetStatusLabel(label));
+    }
+
+    public void SetListeningHint(string hint)
+    {
+        RunOnUi(() => _window.SetHint(hint));
     }
 
     public OverlayWindow GetWindow() => _window;

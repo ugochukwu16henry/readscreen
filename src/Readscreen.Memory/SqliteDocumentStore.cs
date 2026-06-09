@@ -20,7 +20,8 @@ public sealed class SqliteDocumentStore : IDocumentStore
     public async Task InitializeAsync(CancellationToken cancellationToken = default)
     {
         Directory.CreateDirectory(GetDataDir());
-        await using var conn = Open();
+        await using var conn = new SqliteConnection($"Data Source={_dbPath}");
+        await conn.OpenAsync(cancellationToken);
         await using var cmd = conn.CreateCommand();
         cmd.CommandText = """
             CREATE TABLE IF NOT EXISTS sessions (
@@ -44,7 +45,8 @@ public sealed class SqliteDocumentStore : IDocumentStore
     public async Task<Guid> CreateSessionAsync(string name, CancellationToken cancellationToken = default)
     {
         var id = Guid.NewGuid();
-        await using var conn = Open();
+        await using var conn = new SqliteConnection($"Data Source={_dbPath}");
+        await conn.OpenAsync(cancellationToken);
         await using var cmd = conn.CreateCommand();
         cmd.CommandText = "INSERT INTO sessions (id, name, created_at) VALUES ($id, $name, $created)";
         cmd.Parameters.AddWithValue("$id", id.ToString());
@@ -60,7 +62,8 @@ public sealed class SqliteDocumentStore : IDocumentStore
         var chunks = TextChunker.Chunk(text);
         var fileName = Path.GetFileName(filePath);
 
-        await using var conn = Open();
+        await using var conn = new SqliteConnection($"Data Source={_dbPath}");
+        await conn.OpenAsync(cancellationToken);
         for (var i = 0; i < chunks.Count; i++)
         {
             var chunk = chunks[i];
@@ -89,7 +92,8 @@ public sealed class SqliteDocumentStore : IDocumentStore
         var chunks = new List<DocumentChunk>();
         var vectors = new List<float[]>();
 
-        await using var conn = Open();
+        await using var conn = new SqliteConnection($"Data Source={_dbPath}");
+        await conn.OpenAsync(cancellationToken);
         await using var cmd = conn.CreateCommand();
         cmd.CommandText = """
             SELECT id, session_id, source_file, chunk_index, content, embedding
@@ -118,7 +122,8 @@ public sealed class SqliteDocumentStore : IDocumentStore
     public async Task<IReadOnlyList<string>> GetSessionFilesAsync(Guid sessionId, CancellationToken cancellationToken = default)
     {
         var files = new List<string>();
-        await using var conn = Open();
+        await using var conn = new SqliteConnection($"Data Source={_dbPath}");
+        await conn.OpenAsync(cancellationToken);
         await using var cmd = conn.CreateCommand();
         cmd.CommandText = "SELECT DISTINCT source_file FROM chunks WHERE session_id = $sid ORDER BY source_file";
         cmd.Parameters.AddWithValue("$sid", sessionId.ToString());
@@ -126,13 +131,6 @@ public sealed class SqliteDocumentStore : IDocumentStore
         while (await reader.ReadAsync(cancellationToken))
             files.Add(reader.GetString(0));
         return files;
-    }
-
-    private SqliteConnection Open()
-    {
-        var conn = new SqliteConnection($"Data Source={_dbPath}");
-        conn.Open();
-        return conn;
     }
 
     private string GetDataDir()

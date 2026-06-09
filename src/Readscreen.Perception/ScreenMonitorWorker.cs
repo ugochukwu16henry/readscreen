@@ -63,18 +63,27 @@ public sealed class ScreenMonitorWorker : BackgroundService
                     regionSettings.Height);
 
                 _overlay.SetStatus(AssistantStatus.Reading);
+                _overlay.SetListeningHint(
+                    $"Watching {region.Width}x{region.Height} at ({region.Left},{region.Top})");
 
                 using var bitmap = await _capture.CaptureRegionAsync(region, stoppingToken);
                 var text = await _ocr.ExtractTextAsync(bitmap, stoppingToken);
 
-                if (_changeDetector.HasMeaningfulChange(text, _settings.Current.DebounceSeconds))
+                var debounce = _settings.Current.MeetingAssistEnabled
+                    ? _settings.Current.MeetingAssistDebounceSeconds
+                    : _settings.Current.DebounceSeconds;
+
+                if (_changeDetector.HasMeaningfulChange(text, debounce))
                 {
                     _logger.LogDebug("Screen text changed: {Length} chars", text.Length);
                     _orchestrator.OnScreenText(text);
                     _changeDetector.MarkProcessed(text);
                 }
 
-                _overlay.SetStatus(AssistantStatus.Idle);
+                if (_settings.Current.MeetingAssistEnabled)
+                    _overlay.SetStatus(AssistantStatus.Listening);
+                else
+                    _overlay.SetStatus(AssistantStatus.Idle);
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
             {

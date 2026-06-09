@@ -20,7 +20,8 @@ public sealed class SqliteMemoryStore : IMemoryStore
     public async Task InitializeAsync(CancellationToken cancellationToken = default)
     {
         Directory.CreateDirectory(GetDataDir());
-        await using var conn = Open();
+        await using var conn = new SqliteConnection($"Data Source={_dbPath}");
+        await conn.OpenAsync(cancellationToken);
         await using var cmd = conn.CreateCommand();
         cmd.CommandText = """
             CREATE TABLE IF NOT EXISTS memories (
@@ -40,7 +41,8 @@ public sealed class SqliteMemoryStore : IMemoryStore
         var embedding = await _embeddings.EmbedAsync($"{entry.Title}\n{entry.Content}", cancellationToken);
         var blob = EmbeddingToBlob(embedding);
 
-        await using var conn = Open();
+        await using var conn = new SqliteConnection($"Data Source={_dbPath}");
+        await conn.OpenAsync(cancellationToken);
         await using var cmd = conn.CreateCommand();
         cmd.CommandText = """
             INSERT INTO memories (id, category, title, content, updated_at, embedding)
@@ -59,7 +61,8 @@ public sealed class SqliteMemoryStore : IMemoryStore
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        await using var conn = Open();
+        await using var conn = new SqliteConnection($"Data Source={_dbPath}");
+        await conn.OpenAsync(cancellationToken);
         await using var cmd = conn.CreateCommand();
         cmd.CommandText = "DELETE FROM memories WHERE id = $id";
         cmd.Parameters.AddWithValue("$id", id.ToString());
@@ -69,7 +72,8 @@ public sealed class SqliteMemoryStore : IMemoryStore
     public async Task<IReadOnlyList<MemoryEntry>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         var list = new List<MemoryEntry>();
-        await using var conn = Open();
+        await using var conn = new SqliteConnection($"Data Source={_dbPath}");
+        await conn.OpenAsync(cancellationToken);
         await using var cmd = conn.CreateCommand();
         cmd.CommandText = "SELECT id, category, title, content, updated_at FROM memories ORDER BY updated_at DESC";
         await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
@@ -91,7 +95,8 @@ public sealed class SqliteMemoryStore : IMemoryStore
         var entries = new List<MemoryEntry>();
         var vectors = new List<float[]>();
 
-        await using var conn = Open();
+        await using var conn = new SqliteConnection($"Data Source={_dbPath}");
+        await conn.OpenAsync(cancellationToken);
         await using var cmd = conn.CreateCommand();
         cmd.CommandText = "SELECT id, category, title, content, updated_at, embedding FROM memories";
         await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
@@ -111,13 +116,6 @@ public sealed class SqliteMemoryStore : IMemoryStore
 
         var indices = VectorSearchService.TopKIndices(vectors.ToArray(), queryEmbedding, topK);
         return indices.Select(i => entries[i]).ToList();
-    }
-
-    private SqliteConnection Open()
-    {
-        var conn = new SqliteConnection($"Data Source={_dbPath}");
-        conn.Open();
-        return conn;
     }
 
     private string GetDataDir()

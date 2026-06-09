@@ -44,6 +44,8 @@ public partial class OverlayWindow : Window
 
     public void SetStatusLabel(string status) => StatusText.Text = status;
 
+    public void SetHint(string hint) => HintText.Text = hint;
+
     public void EnsureTopmost()
     {
         Topmost = true;
