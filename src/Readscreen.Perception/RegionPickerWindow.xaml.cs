@@ -3,13 +3,15 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Shapes;
 using Readscreen.Core.Models;
+using WpfPoint = System.Windows.Point;
+using WpfRectangle = System.Windows.Shapes.Rectangle;
 
 namespace Readscreen.Perception;
 
 public partial class RegionPickerWindow : Window
 {
-    private Point _start;
-    private Rectangle? _rect;
+    private WpfPoint _start;
+    private WpfRectangle? _rect;
     public CaptureRegion? SelectedRegion { get; private set; }
 
     public RegionPickerWindow()
@@ -28,9 +30,9 @@ public partial class RegionPickerWindow : Window
     private void OnMouseDown(object sender, MouseButtonEventArgs e)
     {
         _start = e.GetPosition(SelectionCanvas);
-        _rect = new Rectangle
+        _rect = new WpfRectangle
         {
-            Stroke = Brushes.White,
+            Stroke = System.Windows.Media.Brushes.White,
             StrokeThickness = 2,
             Fill = new System.Windows.Media.SolidColorBrush(
                 System.Windows.Media.Color.FromArgb(60, 0, 170, 255))
@@ -41,7 +43,7 @@ public partial class RegionPickerWindow : Window
         SelectionCanvas.CaptureMouse();
     }
 
-    private void OnMouseMove(object sender, MouseEventArgs e)
+    private void OnMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
     {
         if (_rect == null || e.LeftButton != MouseButtonState.Pressed)
             return;

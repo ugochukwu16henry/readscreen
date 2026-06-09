@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Readscreen.Core.Interfaces;
 using Windows.Graphics.Imaging;
