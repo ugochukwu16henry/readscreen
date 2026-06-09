@@ -8,5 +8,6 @@ public enum AssistantStatus
     Thinking,
     Answering,
     Paused,
+    Blocked,
     Error
 }

@@ -21,6 +21,7 @@ public sealed class OverlayService : IOverlayService
         RunOnUi(() =>
         {
             _window.Show();
+            _window.EnsureTopmost();
             _isVisible = true;
         });
     }
@@ -47,7 +48,11 @@ public sealed class OverlayService : IOverlayService
 
     public void SetClickThrough(bool enabled)
     {
-        RunOnUi(() => ClickThroughHelper.SetClickThrough(_window, enabled));
+        RunOnUi(() =>
+        {
+            ClickThroughHelper.SetClickThrough(_window, enabled);
+            _window.EnsureTopmost();
+        });
     }
 
     public void UpdateText(string text)
@@ -74,6 +79,7 @@ public sealed class OverlayService : IOverlayService
             AssistantStatus.Thinking => "Thinking",
             AssistantStatus.Answering => "Answering",
             AssistantStatus.Paused => "Paused",
+            AssistantStatus.Blocked => "Capture blocked",
             AssistantStatus.Error => "Error",
             _ => "Idle"
         };

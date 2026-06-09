@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Diagnostics;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Readscreen.Core.Interfaces;
@@ -47,6 +48,13 @@ public sealed class ScreenMonitorWorker : BackgroundService
                     continue;
                 }
 
+                if (IsLockdownBrowserActive())
+                {
+                    _overlay.SetStatus(AssistantStatus.Blocked);
+                    await Task.Delay(TimeSpan.FromSeconds(Math.Max(1, _settings.Current.PollIntervalSeconds)), stoppingToken);
+                    continue;
+                }
+
                 var regionSettings = _settings.Current.CaptureRegion;
                 var region = new CaptureRegion(
                     regionSettings.Top,
@@ -81,5 +89,30 @@ public sealed class ScreenMonitorWorker : BackgroundService
             var delay = TimeSpan.FromSeconds(_settings.Current.PollIntervalSeconds);
             await Task.Delay(delay, stoppingToken);
         }
+    }
+
+    private static bool IsLockdownBrowserActive()
+    {
+        foreach (var process in Process.GetProcesses())
+        {
+            try
+            {
+                if (LockdownBrowserDetector.IsLikelyLockdownBrowser(process.ProcessName) ||
+                    LockdownBrowserDetector.IsLikelyLockdownBrowser(process.MainWindowTitle))
+                {
+                    return true;
+                }
+            }
+            catch
+            {
+                // Ignore processes that exit or deny access while we inspect them.
+            }
+            finally
+            {
+                process.Dispose();
+            }
+        }
+
+        return false;
     }
 }

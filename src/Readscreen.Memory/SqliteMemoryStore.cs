@@ -113,7 +113,12 @@ public sealed class SqliteMemoryStore : IMemoryStore
         return indices.Select(i => entries[i]).ToList();
     }
 
-    private SqliteConnection Open() => new($"Data Source={_dbPath}");
+    private SqliteConnection Open()
+    {
+        var conn = new SqliteConnection($"Data Source={_dbPath}");
+        conn.Open();
+        return conn;
+    }
 
     private string GetDataDir()
     {

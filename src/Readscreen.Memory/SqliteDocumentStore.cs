@@ -128,7 +128,12 @@ public sealed class SqliteDocumentStore : IDocumentStore
         return files;
     }
 
-    private SqliteConnection Open() => new($"Data Source={_dbPath}");
+    private SqliteConnection Open()
+    {
+        var conn = new SqliteConnection($"Data Source={_dbPath}");
+        conn.Open();
+        return conn;
+    }
 
     private string GetDataDir()
     {
