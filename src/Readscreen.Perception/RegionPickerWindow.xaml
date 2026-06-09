@@ -1,0 +1,25 @@
+<Window x:Class="Readscreen.Perception.RegionPickerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="#4400AAFF"
+        Topmost="True"
+        WindowState="Maximized"
+        ShowInTaskbar="False"
+        Cursor="Cross">
+    <Grid>
+        <TextBlock Text="Drag to select capture region. Release to confirm. Press Esc to cancel."
+                   Foreground="White"
+                   FontSize="16"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Top"
+                   Margin="0,40,0,0"
+                   Background="#88000000"
+                   Padding="12"/>
+        <Canvas x:Name="SelectionCanvas" Background="Transparent"
+                MouseLeftButtonDown="OnMouseDown"
+                MouseMove="OnMouseMove"
+                MouseLeftButtonUp="OnMouseUp"/>
+    </Grid>
+</Window>
