@@ -11,10 +11,20 @@ public class AppSettings
     public double OverlayOpacity { get; set; } = 0.85;
     public bool ClickThrough { get; set; }
     public bool AudioEnabled { get; set; } = true;
+    public bool MeetingAssistEnabled { get; set; } = true;
+    public AudioInputMode AudioInputMode { get; set; } = AudioInputMode.SystemAudio;
     public int AudioChunkSeconds { get; set; } = 8;
+    public int MeetingAssistAudioChunkSeconds { get; set; } = 4;
     public int DebounceSeconds { get; set; } = 30;
+    public int MeetingAssistDebounceSeconds { get; set; } = 8;
     public string DataDirectory { get; set; } = "";
     public Guid? ActiveDocumentSessionId { get; set; }
+}
+
+public enum AudioInputMode
+{
+    SystemAudio,
+    Microphone
 }
 
 public class CaptureRegionSettings

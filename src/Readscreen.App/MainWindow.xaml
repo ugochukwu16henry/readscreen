@@ -48,6 +48,8 @@
                     <TextBox x:Name="ModelBox" Margin="0,0,0,8"/>
                     <TextBlock Text="Answer Mode"/>
                     <ComboBox x:Name="AnswerModeBox" Margin="0,0,0,8"/>
+                    <TextBlock Text="Audio Input"/>
+                    <ComboBox x:Name="AudioInputModeBox" Margin="0,0,0,8"/>
                     <TextBlock Text="Poll Interval (seconds)"/>
                     <TextBox x:Name="PollBox" Margin="0,0,0,8"/>
                     <TextBlock Text="Ollama URL"/>
@@ -61,10 +63,14 @@
                     <TextBlock Text="Opacity"/>
                     <Slider x:Name="OpacitySlider" Minimum="0.2" Maximum="1" TickFrequency="0.05"
                             ValueChanged="OnOpacityChanged" Margin="0,0,0,8"/>
+                    <CheckBox x:Name="MeetingAssistBox" Content="Meeting assist mode"
+                              Checked="OnMeetingAssistChanged" Unchecked="OnMeetingAssistChanged"/>
                     <CheckBox x:Name="ClickThroughBox" Content="Click-through overlay"
                               Checked="OnClickThroughChanged" Unchecked="OnClickThroughChanged"/>
                     <CheckBox x:Name="AudioEnabledBox" Content="Enable audio transcription"
                               Margin="0,8,0,0"/>
+                    <TextBlock Text="Listens to meeting audio, understands questions in real time, and shows the answer only on your screen."
+                               Foreground="Gray" TextWrapping="Wrap" Margin="0,8,0,0"/>
                 </StackPanel>
             </GroupBox>
 

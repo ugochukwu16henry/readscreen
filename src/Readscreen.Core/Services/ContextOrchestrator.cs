@@ -75,7 +75,12 @@ public sealed class ContextOrchestrator
 
     private async Task ProcessQuestionAsync(string question, string source)
     {
-        if ((DateTime.UtcNow - _lastQuestionAt).TotalSeconds < _settings.Current.DebounceSeconds)
+        var settings = _settings.Current;
+        var debounceSeconds = settings.MeetingAssistEnabled
+            ? Math.Max(1, settings.MeetingAssistDebounceSeconds)
+            : Math.Max(1, settings.DebounceSeconds);
+
+        if ((DateTime.UtcNow - _lastQuestionAt).TotalSeconds < debounceSeconds)
             return;
 
         lock (_gate)
@@ -97,7 +102,6 @@ public sealed class ContextOrchestrator
             _overlay.ClearText();
             _overlay.UpdateText($"Thinking...\n\nQ: {question}");
 
-            var settings = _settings.Current;
             var memories = settings.AnswerMode is AnswerMode.PersonalMemory or AnswerMode.Hybrid
                 ? await _memoryStore.SearchAsync(question, 5, ct)
                 : Array.Empty<MemoryEntry>();
@@ -118,7 +122,8 @@ public sealed class ContextOrchestrator
                 _latestScreenText,
                 transcript,
                 memories,
-                documents);
+                documents,
+                settings.MeetingAssistEnabled);
 
             SetStatus(AssistantStatus.Answering);
             _overlay.ClearText();

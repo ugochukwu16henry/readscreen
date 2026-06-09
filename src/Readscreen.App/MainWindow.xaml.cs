@@ -49,11 +49,15 @@ public partial class MainWindow : Window
         PollBox.Text = s.PollIntervalSeconds.ToString();
         OllamaUrlBox.Text = s.OllamaBaseUrl;
         OpacitySlider.Value = s.OverlayOpacity;
+        MeetingAssistBox.IsChecked = s.MeetingAssistEnabled;
         ClickThroughBox.IsChecked = s.ClickThrough;
         AudioEnabledBox.IsChecked = s.AudioEnabled;
 
         AnswerModeBox.ItemsSource = Enum.GetValues<AnswerMode>();
         AnswerModeBox.SelectedItem = s.AnswerMode;
+
+        AudioInputModeBox.ItemsSource = Enum.GetValues<AudioInputMode>();
+        AudioInputModeBox.SelectedItem = s.AudioInputMode;
 
         UpdateSessionLabel();
         _ = RefreshDocumentListAsync();
@@ -86,6 +90,19 @@ public partial class MainWindow : Window
         _settings.Current.ClickThrough = enabled;
     }
 
+    private void OnMeetingAssistChanged(object sender, RoutedEventArgs e)
+    {
+        var enabled = MeetingAssistBox.IsChecked == true;
+        _settings.Current.MeetingAssistEnabled = enabled;
+
+        if (enabled && AudioEnabledBox.IsChecked != true)
+            AudioEnabledBox.IsChecked = true;
+
+        StatusBar.Text = enabled
+            ? "Meeting assist enabled: live audio questions will be answered privately on your overlay."
+            : "Meeting assist disabled.";
+    }
+
     private void OnSave(object sender, RoutedEventArgs e)
     {
         var s = _settings.Current;
@@ -97,9 +114,14 @@ public partial class MainWindow : Window
         s.PollIntervalSeconds = double.Parse(PollBox.Text);
         s.OllamaBaseUrl = OllamaUrlBox.Text.Trim();
         s.AnswerMode = (AnswerMode)(AnswerModeBox.SelectedItem ?? AnswerMode.Hybrid);
+        s.AudioInputMode = (AudioInputMode)(AudioInputModeBox.SelectedItem ?? AudioInputMode.SystemAudio);
         s.AudioEnabled = AudioEnabledBox.IsChecked == true;
+        s.MeetingAssistEnabled = MeetingAssistBox.IsChecked == true;
         s.OverlayOpacity = OpacitySlider.Value;
         s.ClickThrough = ClickThroughBox.IsChecked == true;
+
+        if (s.MeetingAssistEnabled)
+            s.AudioEnabled = true;
 
         _settings.Save();
         StatusBar.Text = "Settings saved.";

@@ -30,11 +30,12 @@ dotnet run --project src/Readscreen.App
 | Feature | Description |
 |---------|-------------|
 | **Screen OCR** | Monitors a configurable screen region using Windows OCR |
-| **Audio ASR** | Captures system audio loopback and transcribes via Ollama |
+| **Audio ASR** | Captures system audio loopback or microphone input and transcribes via Ollama |
 | **Local LLM** | Streams answers from Ollama (phi3, qwen2.5-coder, etc.) |
 | **Personal Memory** | SQLite + vector RAG for resume, projects, skills |
 | **Document Mode** | Upload PDF/DOCX/PPTX for presentation Q&A |
 | **Overlay HUD** | Transparent, always-on-top answer panel |
+| **Meeting Assist** | Live meeting questions are detected from audio and answered privately on your overlay |
 
 ## Hotkeys
 
@@ -42,6 +43,12 @@ dotnet run --project src/Readscreen.App
 |--------|--------|
 | `Ctrl+Shift+H` | Toggle overlay visibility |
 | `Ctrl+Shift+P` | Pause / resume assistant |
+
+## Meeting Assist
+
+Enable meeting assist mode from the app settings to make Readscreen listen to meeting audio, detect questions faster, and surface concise answers on the overlay that only you can see.
+
+You can also choose the audio input source between system audio and microphone input from the AI & Response settings group.
 
 ## Project Structure
 
