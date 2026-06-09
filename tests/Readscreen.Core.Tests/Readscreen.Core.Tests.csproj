@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Readscreen.Core\Readscreen.Core.csproj" />
     <ProjectReference Include="..\..\src\Readscreen.Llm\Readscreen.Llm.csproj" />
+    <ProjectReference Include="..\..\src\Readscreen.Memory\Readscreen.Memory.csproj" />
   </ItemGroup>
 
 </Project>

@@ -9,7 +9,8 @@ public class ChangeDetectorTests
     public void HasMeaningfulChange_ReturnsFalse_WhenTextUnchanged()
     {
         var detector = new ChangeDetector();
-        Assert.False(detector.HasMeaningfulChange("Hello world"));
+        Assert.True(detector.HasMeaningfulChange("Hello world"));
+        detector.MarkProcessed("Hello world");
         Assert.False(detector.HasMeaningfulChange("Hello world"));
     }
 
