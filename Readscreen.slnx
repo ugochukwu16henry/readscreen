@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Readscreen.App/Readscreen.App.csproj" />
+    <Project Path="src/Readscreen.Core/Readscreen.Core.csproj" />
+    <Project Path="src/Readscreen.Llm/Readscreen.Llm.csproj" />
+    <Project Path="src/Readscreen.Memory/Readscreen.Memory.csproj" />
+    <Project Path="src/Readscreen.Overlay/Readscreen.Overlay.csproj" />
+    <Project Path="src/Readscreen.Perception/Readscreen.Perception.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Readscreen.Core.Tests/Readscreen.Core.Tests.csproj" />
+  </Folder>
+</Solution>

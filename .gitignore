@@ -1,0 +1,27 @@
+## Build
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+## Local data (private)
+data/
+!data/.gitkeep
+
+## Logs
+logs/
+*.log
+
+## Secrets
+appsettings.Development.json
+*.env
+.env
+
+## OS
+Thumbs.db
+.DS_Store
+
+## IDE
+.idea/
+*.swp
